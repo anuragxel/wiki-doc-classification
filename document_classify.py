@@ -77,6 +77,7 @@ class k_fold_cross_validation(object):
 if __name__ == "__main__":
     pickle.load(open('term_doc_mtx_500')) # loads term_document_matrix
     labels = []
+    cross_valid_k = 5
     with open('train_data_valid.csv','r') as in_file:
         spamreader = csv.reader(in_file, delimiter = ',')
         for row in spamreader:
