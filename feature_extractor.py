@@ -22,7 +22,7 @@ def tokenize(text):
 def extract_features(filename):
 	token_dict = {}
 	with open(filename, 'rb') as csvfile:
-		spamreader = csv.reader(csvfile, delimiter = ',')
+		spamreader = csv.reader(csvfile, delimiter = '\t')
 		for row in spamreader:
 			token_dict[row[0]] = row[3].lower().translate(None, string.punctuation)
 	tfidf = TfidfVectorizer(tokenizer=tokenize, stop_words='english', max_features = 500, sublinear_tf = True)
