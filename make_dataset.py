@@ -51,4 +51,4 @@ if __name__ == "__main__":
             html = replace_quotes(html) 
             html = remove_comment_tag(html)
             html = html.lower().encode('ascii', 'ignore')
-            print '%s,"%s",%s,"%s",%s' % (index, title, identifier, html, tag)
+            print '%s   "%s"    %s  "%s"    %s' % (index, title, identifier, html, tag)
