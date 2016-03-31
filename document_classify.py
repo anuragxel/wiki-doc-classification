@@ -7,6 +7,8 @@ import csv
 import nltk
 import random
 import pickle
+import sys
+csv.field_size_limit(sys.maxsize)
 
 class meta_linear(object):
     def __init__(self, learner):
@@ -75,11 +77,11 @@ class k_fold_cross_validation(object):
         return str(sum(self.values)/self.k_cross)
 
 if __name__ == "__main__":
-    pickle.load(open('term_doc_mtx_500')) # loads term_document_matrix
+    term_document_matrix=pickle.load(open('term_doc_mtx_500')) # loads term_document_matrix
     labels = []
     cross_valid_k = 5
     with open('train_data_valid.csv','r') as in_file:
-        spamreader = csv.reader(in_file, delimiter = ',')
+        spamreader = csv.reader(in_file, delimiter = '\t')
         for row in spamreader:
             labels.append(row[4])
     labels = np.asarray(labels)
