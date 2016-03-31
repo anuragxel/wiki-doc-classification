@@ -77,7 +77,8 @@ class k_fold_cross_validation(object):
         return str(sum(self.values)/self.k_cross)
 
 if __name__ == "__main__":
-    term_document_matrix=pickle.load(open('term_doc_mtx_500')) # loads term_document_matrix
+    term_document_matrix = pickle.load(open('term_doc_mtx_500')) # loads term_document_matrix
+    print term_document_matrix.shape
     labels = []
     cross_valid_k = 5
     with open('train_data_valid.csv','r') as in_file:
