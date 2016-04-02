@@ -61,12 +61,12 @@ class k_fold_cross_validation(object):
         return float(acc)/float(len(gold))
 
     def execute(self):
-        kf = KFold(len(self.x_train), n_folds=self.k_cross)
+        kf = KFold(self.x_train.shape[0], n_folds=self.k_cross)
         own_kappa = []
         for train_idx, test_idx in kf:
             x_train, x_test = self.x_train[train_idx], self.x_train[test_idx]
             y_train, y_test = self.y_train[train_idx], self.y_train[test_idx]
-            dim_red = LDA()
+            dim_red = LDA()#---------------------------------------------------------------------- here is the error
             x_train = dim_red.fit_transform(x_train, y_train)
             x_test = dim_red.transform(x_test)
             stat_obj = self.stat_class() # reflection bitches
