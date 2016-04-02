@@ -52,12 +52,15 @@ class k_fold_cross_validation(object):
         self.values = []
 
     def hit_rate(self, gold, pred):
+        pred =np.array(pred)
+        pred = pred[0].T
         if gold.shape != pred.shape:
             raise BaseException()
         acc = 0
         for i in xrange(0,len(gold)):
             if gold[i] == pred[i]:
                 acc += 1
+        print str(acc)+" are correct out of "+str(len(gold))
         return float(acc)/float(len(gold))
 
     def execute(self):
