@@ -69,9 +69,11 @@ class k_fold_cross_validation(object):
         for train_idx, test_idx in kf:
             x_train, x_test = self.x_train[train_idx], self.x_train[test_idx]
             y_train, y_test = self.y_train[train_idx], self.y_train[test_idx]
-            #dim_red = LDA()#---------------------------------------------------------------------- dimension reduction
-            #x_train = dim_red.fit_transform(x_train, y_train)
-            #x_test = dim_red.transform(x_test)
+            ,,,
+            dim_red = LDA()#---------------------------------------------------------------------- dimension reduction
+            x_train = dim_red.fit_transform(x_train, y_train)
+            x_test = dim_red.transform(x_test)
+            '''
             stat_obj = self.stat_class() # reflection bitches
             stat_obj.train(x_train,y_train)
             y_pred = np.matrix(stat_obj.predict(x_test))
