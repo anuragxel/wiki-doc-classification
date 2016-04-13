@@ -36,7 +36,7 @@
 <h1>
 <a id="dataset" class="anchor" href="#dataset" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Dataset</h1>
 
-<p>We extracted articles from <a href="http://nlp.uned.es/social-tagging/wiki10+/">Wiki10+</a> using bleach and couple of handcrafted regexs.</p>
+<p>We extracted articles from <a href="http://nlp.uned.es/social-tagging/wiki10+/">Wiki10+</a> using xmltree, bleach and couple of handcrafted regexs. Also, we extracted the top tag associated with them so that each document has a tag associated with them, this will be our topic. We reduced the number of topics from 470 to 24 to make it a feasible classification problem.</p>
 
 <h1>
 <a id="methods-used" class="anchor" href="#methods-used" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Methods Used</h1>
@@ -44,12 +44,14 @@
 <h2>
 <a id="tf---idf" class="anchor" href="#tf---idf" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>TF - IDF</h2>
 
-<p>Markdown has two types of links: inline and reference. For both types of links, the text you want to display to the user is placed in square brackets. For example, if you want your link to display the text “GitHub”, you write.</p>
+<p>A document-term matrix or term-document matrix is a mathematical matrix that describes the frequency of terms that occur in a collection of documents. In a document-term matrix, rows correspond to documents in the collection and columns correspond to terms. There are various schemes for determining the value that each entry in the matrix should take, and we firstly use the tf-idf formulation. </p>
+
+<p>tf–idf, short for term frequency–inverse document frequency, is a numerical statistic that is intended to reflect how important a word is to a document in a collection or corpus. The number of times a term occurs in a document is called its term frequency while inverse document frequency factor is incorporated which diminishes the weight of terms that occur very frequently in the document set and increases the weight of terms that occur rarely. tf–idf is the product of two statistics, term frequency and inverse document frequency.</p>
 
 <h2>
-<a id="lda" class="anchor" href="#lda" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>LDA</h2>
+<a id="latent-dirichlet-allocation" class="anchor" href="#latent-dirichlet-allocation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Latent Dirichlet Allocation</h2>
 
-<p>Markdown has two types of links: inline and reference. For both types of links, the text you want to display to the user is placed in square brackets. For example, if you want your link to display the text “GitHub”, you write</p>
+<p>Latent Dirichlet allocation is a generative  model that allows sets of observations to be explained by unobserved groups (latent groups) that explain why some parts of the data are similar. If observations are words collected into documents, it posits that each document is a mixture of a small number of topics and that each word's creation is attributable to one of the document's topics.</p>
 
 <h2>
 <a id="word2vec" class="anchor" href="#word2vec" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>word2vec</h2>
@@ -60,6 +62,13 @@
 <a id="doc2vecparagraph2vec" class="anchor" href="#doc2vecparagraph2vec" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>doc2vec/paragraph2vec</h2>
 
 <p>Markdown has two types of links: inline and reference. For both types of links, the text you want to display to the user is placed in square brackets. For example, if you want your link to display the text “GitHub”, you write</p>
+
+<h1>
+<a id="tech-used" class="anchor" href="#tech-used" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Tech used</h1>
+
+<p>nltk, scikit-learn, gensim, bleach</p>
+
+<p>Huge shoutout to the library developers! :)</p>
 
 <h1>
 <a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authors and Contributors</h1>
