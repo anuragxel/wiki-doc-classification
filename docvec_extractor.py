@@ -5,12 +5,13 @@ import pickle
 import nltk
 from nltk.stem.snowball import SnowballStemmer
 from sklearn.feature_extraction.text import TfidfVectorizer
-import numpy
+import numpy as np
 import scipy
 import gensim
 from gensim.models.doc2vec import LabeledSentence
 from gensim.models import Doc2Vec
 import random
+import time
 
 csv.field_size_limit(sys.maxsize)
 
@@ -49,5 +50,29 @@ def extract_features(filename):
     model.save('./imdb.d2v')
     print model.most_similar('good')
 
+def tokenize(text):
+    tokens = nltk.word_tokenize(text)
+    stems = []
+    stemmer = SnowballStemmer("english", ignore_stopwords=True)
+    for item in tokens:
+        stems.append(stemmer.stem(item))
+    return stems
+
+def load_and_emit_vectors(filename):
+    model = Doc2Vec.load('../project_snapshot/imdb.d2v')
+    dataset = pickle.load(open('gensim_data.frmt'))
+    vecs = []
+    i = 0
+    with open(filename, 'rb') as csvfile:
+        spamreader = csv.reader(csvfile, delimiter = '\t')
+        for row in spamreader:
+            i += 1
+            val = tokenize(row[3].lower().translate(None, string.punctuation))
+            x = model.infer_vector(val)
+            print i
+            vecs.append(x)
+    pickle.dump(np.array(vecs), open('doc2vec_features', 'w'))
+
 if __name__ == "__main__":
-    extract_features("train_data_valid.csv")
+    #extract_features("train_data_valid.csv")
+    load_and_emit_vectors("train_data_valid.csv")

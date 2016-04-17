@@ -12,11 +12,14 @@ import gensim
 from gensim.models.doc2vec import LabeledSentence
 from gensim.models import LdaModel,TfidfModel
 import random
+import pprint
+import pickle
 
 csv.field_size_limit(sys.maxsize)
 
 stop = stopwords.words('english')
 
+stupid_stuff = [ 'use', 'also', 'one', 'first', 'includ','new' ]
 def parse_tokenize_stem(texts):
     r_texts = []
     for text in texts:
@@ -25,6 +28,8 @@ def parse_tokenize_stem(texts):
         stems = []
         stemmer = SnowballStemmer("english", ignore_stopwords=True)
         for item in tokens:
+	    if stemmer.stem(item) in stupid_stuff:
+                continue 
             stems.append(stemmer.stem(item))
         r_texts.append(stems)
     return r_texts
@@ -43,13 +48,19 @@ def topic_modelling(filename):
     #return
     dictionary = gensim.corpora.Dictionary(texts)
     corpus = [dictionary.doc2bow(text) for text in texts]
+    pickle.dump(corpus, open('gensim_data.frmt', 'wb'))
     print 'corpus done'
-    print 'starting model'
+    print 'lets seearting model'
     lda = gensim.models.ldamodel.LdaModel(corpus=corpus, id2word=dictionary, 
-                    num_topics=25, update_every=1, chunksize=10000, passes=1)
-    val = lda.print_topics(num_topics=25, num_words=10)
+                    num_topics=5, update_every=1, chunksize=10000, passes=1)
+    val = lda.print_topics(num_topics=5, num_words=10)
     lda.save('lda_25.gensim')
-    print val
+    pprint.pprint(val)
+
+def open_model():
+    lda = gensim.models.LdaModel.load('lda_25.gensim')
+    val = lda.print_topics(num_topics=25, num_words=3)
 
 if __name__ == "__main__":
     topic_modelling("train_data_valid.csv")
+    #open_model()

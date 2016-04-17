@@ -25,10 +25,12 @@ def extract_features(filename):
 		spamreader = csv.reader(csvfile, delimiter = '\t')
 		for row in spamreader:
 			token_dict[row[0]] = row[3].lower().translate(None, string.punctuation)
-	tfidf = TfidfVectorizer(tokenizer=tokenize, stop_words='english', max_features = 500, sublinear_tf = True)
+	tfidf = TfidfVectorizer(tokenizer=tokenize, stop_words='english', max_features = 10000, sublinear_tf = True)
 	term_document_matrix = tfidf.fit_transform(token_dict.values())
-	with open('term_doc_mtx_500', 'w') as f:
+	with open('term_doc_mtx_10000', 'w') as f:
 		pickle.dump(term_document_matrix, f)
+	with open('mapping_10000', 'w') as f:
+		pickle.dump(tfidf.get_feature_names(), f)
 
 
 if __name__ == "__main__":

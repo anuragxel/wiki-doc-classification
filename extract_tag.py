@@ -7,7 +7,7 @@ import pprint
 from nltk.stem.snowball import SnowballStemmer
 import json
 
-stupid_tags = [ '-', '*' ]
+stupid_tags = [ '-', '*','wikipedia','wiki','interesting','article' ]
 
 def get_categories(root):
     category = {}
@@ -22,7 +22,9 @@ def get_categories(root):
                 # Both the tag and count may be switched around,
                 # swap to have correctness
                 if not count.isdigit() and tag.isdigit():
-                    tag,count = count,tag 
+                    tag,count = count,tag
+                if tag in stupid_tags:
+                    continue
                 if tag in category and not tag.isdigit():
                     category[tag] += 1
                 else:
@@ -64,7 +66,7 @@ def extract_tag():
     root = tag_tree.getroot()
     category = get_categories(root)
     sorted_category = sorted(category.items(), key=operator.itemgetter(1),reverse=True)
-    category_set =  dict(sorted_category[:472])
+    category_set =  dict(sorted_category[:24])
     make_category_for_doc(root, category_set)
 
 def check_extracted_tag_csv(filename):
@@ -108,9 +110,9 @@ if __name__ == "__main__":
     ###
     ### Check whether everything is fine. The tags are similar, so we need to clean up
     ###
-    #c = check_extracted_tag_csv('top_tag.csv')
-    #pprint.pprint(c[1])
-    #print len(c[1])
+    c = check_extracted_tag_csv('top_tag.csv')
+    pprint.pprint(c[1])
+    print len(c[1])
     
     ###
     ### clean up tags by stemming the tags from the top_tags.csv and then redirect
@@ -120,7 +122,6 @@ if __name__ == "__main__":
     ###
     ### Check whether everything is fine. The tags are similar, so we need to clean up
     ###
-    c = check_extracted_tag_csv('cleaned_tag.csv')
-    pprint.pprint(c[1])
-    print len(c[1])
-
+    #c = check_extracted_tag_csv('cleaned_tag.csv')
+    #pprint.pprint(c[1])
+    #print len(c[1])

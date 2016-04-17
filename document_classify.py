@@ -3,14 +3,18 @@ import sklearn
 from sklearn.cross_validation import KFold
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import SGDClassifier
+from sklearn.grid_search import RandomizedSearchCV
+from sklearn.decomposition import PCA
+from sklearn.feature_selection import SelectKBest
+from sklearn.pipeline import FeatureUnion
+from operator import itemgetter
 import csv
 from sklearn.lda import LDA
 import nltk
 import random
 import pickle
 import sys
-import mlpy
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+
 csv.field_size_limit(sys.maxsize)
 
 class meta_linear(object):
@@ -28,11 +32,11 @@ class meta_linear(object):
 
 class multinomial_bayes(meta_linear):
     def __init__(self):
-        super(self.__class__, self).__init__(MultinomialNB(alpha=1.0, class_prior=None, fit_prior=True))
+        super(self.__class__, self).__init__(MultinomialNB(alpha=0.5, class_prior=None, fit_prior=True))
 
 class SGD_SVM(meta_linear):
     def __init__(self):
-        super(self.__class__, self).__init__(SGDClassifier( alpha=0.0001, average=False, class_weight=None,
+        super(self.__class__, self).__init__(SGDClassifier( alpha=0.0003, average=False, class_weight=None,
                                                             eta0=0.0,   l1_ratio=0.15,
                                                             learning_rate='optimal', loss='hinge', n_jobs=1,
                                                             penalty='l2', warm_start=False))
@@ -79,12 +83,30 @@ class k_fold_cross_validation(object):
             stat_obj = self.stat_class() # reflection bitches
             stat_obj.train(x_train,y_train)
             y_pred = np.matrix(stat_obj.predict(x_test))
+            print y_pred
             accuracy = self.hit_rate(y_test, y_pred) # function comes here 
             self.values.append(accuracy)
         return str(sum(self.values)/self.k_cross)
 
+def report(grid_scores, n_top=3):
+    top_scores = sorted(grid_scores, key=itemgetter(1), reverse=True)[:n_top]
+    for i, score in enumerate(top_scores):
+        print("Model with rank: {0}".format(i + 1))
+        print("Mean validation score: {0:.3f} (std: {1:.3f})".format(
+              score.mean_validation_score,
+              np.std(score.cv_validation_scores)))
+        print("Parameters: {0}".format(score.parameters))
+        print("")
+
+def estimate_params(clf, X, y, params):
+    n_iter_search = 20
+    random_search = RandomizedSearchCV(clf, param_distributions=params,
+                                   n_iter=n_iter_search)
+    random_search.fit(X, y)
+    report(random_search.grid_scores_)
+
 if __name__ == "__main__":
-    term_document_matrix=pickle.load(open('term_doc_mtx_500')) # loads term_document_matrix
+    term_document_matrix=pickle.load(open('doc2vec_features')) # loads term_document_matrix
     print term_document_matrix.shape
     labels = []
     cross_valid_k = 5
@@ -93,7 +115,27 @@ if __name__ == "__main__":
         for row in spamreader:
             labels.append(row[4])
     labels = np.asarray(labels)
-    bayes_k_cross = k_fold_cross_validation(cross_valid_k,multinomial_bayes,term_document_matrix,labels)
-    print "bayes multinomial : " + bayes_k_cross.execute()
-    SGD_k_cross = k_fold_cross_validation(cross_valid_k,SGD_SVM,term_document_matrix,labels)
-    print "bayes multinomial : " + SGD_k_cross.execute()
+    #pca = PCA(n_components=50)
+    #selection = SelectKBest(k=50)
+    #combined_features = FeatureUnion([("pca", pca), ("univ_select", selection)])
+    #X_features = combined_features.fit(term_document_matrix.toarray(), labels).transform(term_document_matrix.toarray())
+    #print X_features.shape
+    #print "NaiveBayes"
+    #estimate_params(MultinomialNB(alpha=0.5, class_prior=None, fit_prior=True),term_document_matrix,labels, params ={
+    #    "alpha" :  np.arange(0.01,1,0.01)
+    #})
+    print "SGD_full" 
+    estimate_params(SGDClassifier( alpha=0.0003, average=False, class_weight=None,
+                                                            eta0=0.0,   l1_ratio=0.15,
+                                                            learning_rate='optimal', loss='hinge', n_jobs=1,
+                                                            penalty='l2', warm_start=False),term_document_matrix,labels, params ={
+        "alpha" :  np.arange(0.01,1,0.01),
+        "l1_ratio" : np.arange(0.01,1,0.01),
+        "loss" : ["hinge", "log", "huber", "squared_hinge"]
+    })
+    
+
+    #bayes_k_cross = k_fold_cross_validation(cross_valid_k,multinomial_bayes,term_document_matrix,labels)
+    #print "bayes multinomial : " + bayes_k_cross.execute()
+    #SGD_k_cross = k_fold_cross_validation(cross_valid_k,SGD_SVM,term_document_matrix,labels)
+    #print "stochastic gradient descent : " + SGD_k_cross.execute()
